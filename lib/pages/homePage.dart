@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:student_details/widget/drawer.dart';
 
@@ -21,8 +21,8 @@ class _homePageState extends State<homePage> {
   // text field controller
   final TextEditingController _nameController = TextEditingController();
 
-  final TextEditingController _ageController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _qtyController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
 
   final CollectionReference _items =
       FirebaseFirestore.instance.collection('items');
@@ -83,13 +83,19 @@ class _homePageState extends State<homePage> {
                 TextField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                      labelText: 'Name', hintText: 'eg.Elon'),
+                      labelText: 'Item Name', hintText: 'eg.Book'),
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  controller: _ageController,
+                  controller: _qtyController,
                   decoration: const InputDecoration(
-                      labelText: 'Age', hintText: 'eg.30'),
+                      labelText: 'Quantity', hintText: 'eg.30'),
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _priceController,
+                  decoration: const InputDecoration(
+                      labelText: 'Price', hintText: 'eg.30'),
                 ),
                 const SizedBox(
                   height: 10,
@@ -97,19 +103,25 @@ class _homePageState extends State<homePage> {
                 Center(
                   child: ElevatedButton(
                       onPressed: () async {
-                        if (imageUrl.isEmpty) {
-                          Fluttertoast.showToast(msg: "Please upload an image");
-                          return;
-                        }
+                        // if (imageUrl.isEmpty) {
+                        //   Fluttertoast.showToast(msg: "Please upload an image");
+                        //   return;
+                        // }
                         final String name = _nameController.text;
-                        final int? age = int.tryParse(_ageController.text);
+                        final int? qty = int.tryParse(_qtyController.text);
+                        final int? price = int.tryParse(_priceController.text);
 
                         // ignore: unnecessary_null_comparison
-                        if (name != null && age != null) {
-                          await _items.add(
-                              {"name": name, "age": age, 'image': imageUrl});
+                        if (name != null && qty != null) {
+                          await _items.add({
+                            "name": name,
+                            "qty": qty,
+                            'image': imageUrl,
+                            "price": price,
+                          });
                           _nameController.text = '';
-                          _ageController.text = '';
+                          _qtyController.text = '';
+                          _priceController.text = '';
 
                           Navigator.of(context).pop();
                         }
@@ -136,7 +148,7 @@ class _homePageState extends State<homePage> {
         appBar: AppBar(
           backgroundColor: Colors.blueGrey,
           centerTitle: true,
-          title: const Text("Students"),
+          title: const Text("Our Item"),
           leading: IconButton(
               onPressed: () {
                 _globalKey.currentState!.openDrawer();
@@ -163,7 +175,7 @@ class _homePageState extends State<homePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Icon(Icons.person_add_alt_1_outlined),
-                Text('Add Student'),
+                Text('Add Items'),
               ],
             ),
             onPressed: () {
@@ -181,10 +193,12 @@ class _homePageState extends State<homePage> {
                 QuerySnapshot querySnapshot = snapshot.data;
                 List<QueryDocumentSnapshot> document = querySnapshot.docs;
                 List<Map> items = document.map((e) => e.data() as Map).toList();
+                // List <MapEntry <String,int>> sortList =document.e
                 return ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map thisItems = items[index];
+
                     return Card(
                       color: Color.fromARGB(255, 203, 244, 217),
                       shape: RoundedRectangleBorder(
@@ -200,13 +214,7 @@ class _homePageState extends State<homePage> {
                                     radius: 17,
                                     backgroundColor:
                                         Color.fromARGB(255, 129, 226, 243),
-                                    child: ClipOval(
-                                        child: Image.network(
-                                      '${thisItems['image']}',
-                                      fit: BoxFit.cover,
-                                      width: 50,
-                                      height: 50,
-                                    ))),
+                                    child: ClipOval(child: Icon(Icons.person))),
                               )
                             : SizedBox(
                                 height: 50,
@@ -224,9 +232,17 @@ class _homePageState extends State<homePage> {
                               color: Colors.black,
                               fontSize: 20),
                         ),
-                        subtitle: Text(
-                          "${thisItems['age']}",
-                          style: const TextStyle(color: Colors.black),
+                        subtitle: Column(
+                          children: [
+                            Text(
+                              "${thisItems['qty']}",
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            Text(
+                              "${thisItems['price']}",
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ],
                         ),
                       ),
                     );
