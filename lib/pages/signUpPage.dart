@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:student_details/pages/signInPage.dart';
 
 class signupPage extends StatefulWidget {
   const signupPage({super.key});
@@ -86,6 +87,21 @@ class _signupPageState extends State<signupPage> {
                           signup();
                         },
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('You Have Alredy Account'),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => signInPage(),
+                                  ));
+                            },
+                            child: Text('SignIn Here'))
+                      ],
                     ),
                   ],
                 ),

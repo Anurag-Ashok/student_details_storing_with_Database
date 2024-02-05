@@ -47,7 +47,7 @@ class _homePageState extends State<homePage> {
               children: [
                 const Center(
                   child: Text(
-                    "Add Student",
+                    "Add Items",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -174,7 +174,7 @@ class _homePageState extends State<homePage> {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Icon(Icons.person_add_alt_1_outlined),
+                Icon(Icons.shopping_cart),
                 Text('Add Items'),
               ],
             ),
@@ -233,13 +233,14 @@ class _homePageState extends State<homePage> {
                               fontSize: 20),
                         ),
                         subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${thisItems['qty']}",
+                              "Quantity : ${thisItems['qty']}",
                               style: const TextStyle(color: Colors.black),
                             ),
                             Text(
-                              "${thisItems['price']}",
+                              "Price : ${thisItems['price']}",
                               style: const TextStyle(color: Colors.black),
                             ),
                           ],
